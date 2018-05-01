@@ -2,7 +2,7 @@
 
 int main(void)
 {
-	NVIC_Configuration();
+	//NVIC_Configuration();
 	
 	LCD_INIT();
 	FREQ_INIT();
@@ -10,18 +10,17 @@ int main(void)
 	APA102C_INIT();
 	
 	USART_INIT();
-	Status = SD_Init();
+	//Status = SD_Init();
 	
 	//SD uses C 8 9 10 11 12 and D 0 1 2 3
-	/*
+	
 	INITGPIO_OUT();
 	INITGPIO_IN();
-	INITGPIO_IN2();
 	ANIMATION_INIT();
-	*/
+	
 
-	SD_MultiBlockTest();
-	sd_test();
+	//SD_MultiBlockTest();
+	//sd_test();
 	delay =125000;
 	delay_offset = -300;
   while (1) 
@@ -47,7 +46,7 @@ int main(void)
 				test.text = "H A R D E R";
 				test.duration= 10000;
 				test.duration_fix = 100000;
-				addLayer(test);
+				image(putImage(1,58));
 				
 			}
 		
@@ -70,23 +69,24 @@ int main(void)
 				test.cmd2 = 0;
 				test.width = 5;
 				test.text = "A";
-				test.duration = 0;
+				test.duration = 1000;
 				test.duration_fix = 100;
-				addLayer(test);
+				setAllColor(test);
 				
 		}
 		
 		delay_us(delay);
-		/*
-		LCD_DrawString(0,100, "Check:                 "); 
+		
+
+		LCD_DrawString(0,100,"CHECK:                           " );
 		sprintf(freq_str,"%d",Check());
 		LCD_DrawString(100,100, freq_str);	
 		updateAnimation(4*31250/1000);
-		*/
+		
 		LCD_TEST();
 		
 		//displayNext();
-		//ConvertToPitch(Check(), 1);
+		ConvertToPitch(Check(), 1);
   }
 }
 
@@ -123,14 +123,14 @@ void TIM2_IRQHandler(void)
 			
       newv = TIM_GetCapture3(TIM2);
       if(GPIOA->IDR & GPIO_Pin_2) {
-				/*
+				
 				LCD_DrawString(0,25, "Old value:                 ");
 				sprintf(freq_str,"%d",oldv);
 				LCD_DrawString(100,25, freq_str);
 				LCD_DrawString(0,50, "New value:                 ");
 				sprintf(freq_str,"%d",newv);
 				LCD_DrawString(100,50, freq_str);
-				*/
+				
 				period = (newv > oldv)? (newv - oldv) : (0xffff - oldv + newv);
 				oldv = newv;
       }
