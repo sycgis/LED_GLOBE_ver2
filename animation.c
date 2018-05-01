@@ -89,8 +89,10 @@ void callAnimation(struct Param p)
 		  break;
 		case 4:
 			setAllColor(p);
-		//case 5:
-			//image(p);
+			break;
+		case 5:
+			image(p);
+			break;
 	}
 }
 //Sets LED Frame to a single color

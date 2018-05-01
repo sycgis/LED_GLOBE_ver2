@@ -27,14 +27,14 @@
 */
 
 
-#define COLUMN1		              ((uint16_t)0x0100)  /*!< Pin 8 selected */
-#define COLUMN2                 ((uint16_t)0x0200)  /*!< Pin 9 selected */
-#define COLUMN3                 ((uint16_t)0x0400)  /*!< Pin 10 selected */
-#define COLUMN4                 ((uint16_t)0x0800)  /*!< Pin 11 selected */
+#define COLUMN1		              ((uint16_t)0x0004)  /*!< Pin 2 selected */
+#define COLUMN2                 ((uint16_t)0x0008)  /*!< Pin 3 selected */
+#define COLUMN3                 ((uint16_t)0x0010)  /*!< Pin 4 selected */
+#define COLUMN4                 ((uint16_t)0x0020)  /*!< Pin 5 selected */
 #define ROW1                    ((uint16_t)0x0040)  /*!< Pin 6 selected */
 #define ROW2    	              ((uint16_t)0x0080)  /*!< Pin 7 selected */
-#define ROW3  	                ((uint16_t)0x1000)  /*!< Pin 12 selected */
-#define ROW4	                  ((uint16_t)0x0010)  /*!< Pin 4 selected */
+#define ROW3  	                ((uint16_t)0x0002)  /*!< Pin 0 selected */
+#define ROW4	                  ((uint16_t)0x2000)  /*!< Pin 13 selected */
 
 struct Param null;
 struct Param animation_list[BUTTON_NUM][EFFECT_NUM];
@@ -46,7 +46,7 @@ void INITGPIO_OUT()
 	//4 OUTPUT pins: G2, G3, G4, G5
 	GPIO_InitTypeDef GPIO_InitStructure;
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_11;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
@@ -57,22 +57,22 @@ void INITGPIO_IN()
 	//4 INPUT pins: G2, G3, G4, G5
 	GPIO_InitTypeDef GPIO_InitStructure;
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_12 | GPIO_Pin_4;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_1 | GPIO_Pin_13;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 }
-/*
+
 void INITGPIO_IN2()
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE);
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8| GPIO_Pin_9;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOD, &GPIO_InitStructure);
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
 }
-*/
+
 
 int Check()
 {
@@ -232,4 +232,6 @@ void ANIMATION_INIT(void){
 	animation_list[10][0] = swipeColor(34,141,255,0,1,300);
 	
 	animation_list[11][0] = swipeColor(186,1,255,0,0,300);
+	
+	animation_list[12][0] = putImage(1,58);
 }

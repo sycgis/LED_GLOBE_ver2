@@ -2,7 +2,7 @@
 
 int main(void)
 {
-	//NVIC_Configuration();
+	NVIC_Configuration();
 	
 	LCD_INIT();
 	FREQ_INIT();
@@ -10,12 +10,13 @@ int main(void)
 	APA102C_INIT();
 	
 	USART_INIT();
-	//Status = SD_Init();
+	Status = SD_Init();
 	
 	//SD uses C 8 9 10 11 12 and D 0 1 2 3
 	
 	INITGPIO_OUT();
 	INITGPIO_IN();
+	//INITGPIO_IN2();
 	ANIMATION_INIT();
 	
 
