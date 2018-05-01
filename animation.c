@@ -1,9 +1,12 @@
 #include "animation.h"
-#include "lcd.h"
 #include "stdio.h"
+#include "lcd.h"
+
 char debug[20];
 
 struct Param animation_layer[MAX_LAYER];
+SD_Error Status = SD_OK;
+uint8_t Buffer_MultiBlock_Rx[MULTI_BUFFER_SIZE];
 
 void drawPoint(int i, int j, int R, int G, int B,int Br){
 			master_channel[i][j][CH_RED] = R;
@@ -84,17 +87,40 @@ void callAnimation(struct Param p)
 		case 3:
 			circle(p);
 		  break;
+		case 4:
+			setAllColor(p);
+			break;
+		case 5:
+			image(p);
+			break;
 	}
 }
-	
+//Sets LED Frame to a single color
+void setAllColor(struct Param p)
+{
+	int i,j;
+	for (i = 0; i < SCREEN_WIDTH; i++)
+	{
+		for(j = 0; j < LED_LEN; j++)
+		{
+
+			master_channel[i][j][CH_RED] = p.Red;
+			master_channel[i][j][CH_GREEN] = p.Green;
+			master_channel[i][j][CH_BLUE] = p.Blue;
+			master_channel[i][j][CH_BRIGHTNESS] = p.Brightness;
+			
+		}
+	}
+}
+
 //Loops through all the animation layer and clears it.
 void updateAnimation(uint16_t period)
 {
 	uint8_t i;
 	for(i=0;i<animation_layer_length;i++)
 	{
-		callAnimation(animation_layer[i]);
 		animation_layer[i].duration -= period; // in ms.
+		callAnimation(animation_layer[i]);	
 		if(animation_layer[i].duration <= 0) removeLayer(i);
 	}
   if(animation_layer_length>0){
@@ -164,8 +190,81 @@ void circle(struct Param p){
 	i = p.x;
 	j = p.y;
 	radius = p.width;
-	LCD_DrawString(0,50, "radius:                 ");
-	sprintf(debug,"%d",radius);
-	LCD_DrawString(100,50,debug);
 	drawCircle ( i, j, radius,  p.Red, p.Green, p.Blue, p.Brightness,p.cmd);
+}
+
+void image(struct Param p){
+		int i,j,k;
+		unsigned int address = 0x1008036;
+		address += 0x2000 * p.cmd;
+	  if (Status == SD_OK)
+  {
+    /* Read block of many bytes from address 0 */
+    Status = SD_ReadMultiBlocks(Buffer_MultiBlock_Rx, address, BLOCK_SIZE, NUMBER_OF_BLOCKS);
+    /* Check if the Transfer is finished */
+    Status = SD_WaitReadOperation();
+    while(SD_GetStatus() != SD_TRANSFER_OK);
+  }
+	
+
+		k = 54;
+		for (j = LED_LEN -1 ; j >= 0; j--)
+	{
+		for(i = 0; i < p.y; i++)
+		{
+			if(k + 3<LED_LEN*p.y*CHANNEL_DEPTH){
+			master_channel[i][j][CH_RED] = Buffer_MultiBlock_Rx[k+2];
+			master_channel[i][j][CH_GREEN] = Buffer_MultiBlock_Rx[k+1];
+			master_channel[i][j][CH_BLUE]= Buffer_MultiBlock_Rx[k];
+			k+=3;
+			if(i == p.y-1) k += (p.y *3)%4;
+			}
+			}
+		}
+}
+struct Param putImage(int cmd,int width){
+	struct Param x;
+
+	x.func_num = 5;
+	x.cmd = cmd;
+	x.y = width;
+	
+	return x;
+}
+struct Param textCenter(char* txt, int R, int G, int B){
+	struct Param x;
+	x.x = 10;
+	x.y =14;
+	x.func_num = 0;
+	x.Red = R;
+	x.Green = G;
+	x.Blue = B;
+	x.text = txt;
+	
+	
+	return x;
+}
+
+struct Param bgColor(int R, int G, int B){
+	struct Param x;
+	x.func_num = 4;
+	x.Red = R;
+	x.Green = G;
+	x.Blue = B;
+
+	return x;
+}
+
+struct Param swipeColor(int R, int G, int B, int vertical, int direction, int duration){
+	struct Param x;
+	x.func_num = 2;
+	x.Red = R;
+	x.Green = G;
+	x.Blue = B;
+	x.cmd = vertical;
+	x.cmd2 = direction;
+	x.duration = duration;
+	x.duration_fix = duration;
+	
+	return x;
 }

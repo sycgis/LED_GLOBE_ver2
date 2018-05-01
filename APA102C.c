@@ -54,7 +54,7 @@ void sendByte(uint8_t byte)
 {
 	while(!SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE));  //transmit buffer empty?
 	SPI_I2S_SendData(SPI1, byte); // send 8 bits of data
-	//while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY));
+	while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY));
 }
 
 // Updates contents of Master Channel to LED Frame
@@ -85,7 +85,7 @@ void displayNext(void)
 		sendByte(0x00);
 		sendByte(0x00);
 		
-		for (i = LED_LEN; i >= 0; i--)
+		for (i =LED_LEN; i >= 0  ; i--)
 		{
 			sendByte(LEDFrame[current_col][i] >> 24); // INIT + GLOBAL
 			sendByte(LEDFrame[current_col][i] >> 16); // BLUE
@@ -102,10 +102,6 @@ void displayNext(void)
 	current_col = (current_col + 1)  % SCREEN_WIDTH;
 }
 
-//Br is 0x00 ~ 0x1F
-uint32_t color(uint8_t R, uint8_t G, uint8_t B, uint8_t Br){
-		uint32_t color = (0xE0 + Br) << 24 | B << 16 | G << 8 | R;
-}
 
 void getColor(uint32_t color_b,uint8_t color[], uint8_t size){
 	color[CH_RED] = color_b;
@@ -113,22 +109,7 @@ void getColor(uint32_t color_b,uint8_t color[], uint8_t size){
 	color[CH_GREEN] = color_b >>8; 
 	color[CH_BRIGHTNESS] = color_b >>24 ^ 0xE0; 
 }
-//Sets LED Frame to a single color
-void setAllColor(uint8_t R, uint8_t G, uint8_t B, uint8_t Br)
-{
-	int i,j;
-	for (i = 0; i < SCREEN_WIDTH; i++)
-	{
-		for(j = 0; j < LED_LEN; j++)
-		{
-			master_channel[i][j][CH_RED] = R;
-			master_channel[i][j][CH_GREEN] = G;
-			master_channel[i][j][CH_BLUE] = B;
-			master_channel[i][j][CH_BRIGHTNESS] = Br;
-		}
-	}
-	frame_modified = TRUE;
-}
+
 
 void setAllColorTest(void)
 {
@@ -137,11 +118,12 @@ void setAllColorTest(void)
 	{
 		for(j = 0; j < LED_LEN; j++)
 		{
-			if(i==0){
+			if(i==SCREEN_WIDTH-1){
 			LEDFrame[i][j] = 0xefff0000;
 			}
-			else{
-			LEDFrame[i][j] = 0xef0000ff;
+			else if (i == 0)
+				{
+				LEDFrame[i][j] = 0xef0000ff;
 			}
 		}
 	}

@@ -1,60 +1,29 @@
-#include "stm32f10x.h"
-#include "lcd.h"
-#include "math.h"
-#include "freq.h"
-#include "stdio.h"
-#include "animation.h"
-#include "APA102C.h"
-#include "TextDisplay.h"
-#include "USART.h"
-#include "LaunchKeys.h"
-
-#define DELAY_CONST 0.07058294738 // 10^6/(196774*SCREEN_WIDTH)
-
-char freq_str[20];
-uint16_t oldv,period,oldfrequency;
-uint16_t freq;
-uint16_t hall_test;
-uint32_t sweep = 0xff000000;
-unsigned int delay;
-int     delay_offset;
-uint8_t pressed,pressed2;
-unsigned char  byte;
-
-
-
-
-void KEY_CONFIG(void);
-void setAllColor(uint8_t R, uint8_t G, uint8_t B, uint8_t Br);
-void update(uint8_t forceUpdate);
-void Delayus(int duration);
-void TIM2_IRQHandler(void);
-void Test(void);
-void LCD_TEST();
-
-void INITGPIO_IN();
-void INITGPIO_IN2();
-void INITGPIO_OUT();
-int Check();
-void ConvertToPitch(uint16_t button, uint16_t mode);
-void __attribute__((weak)) osa_mdelay(unsigned int msec);
-void __attribute__((weak)) delay_us(unsigned int usec);
+#include "main.h"
 
 int main(void)
 {
+	NVIC_Configuration();
+	
 	LCD_INIT();
 	FREQ_INIT();
 	KEY_CONFIG();
 	APA102C_INIT();
+	
 	USART_INIT();
+	Status = SD_Init();
+	
+	//SD uses C 8 9 10 11 12 and D 0 1 2 3
 	
 	INITGPIO_OUT();
 	INITGPIO_IN();
-	INITGPIO_IN2();
+	//INITGPIO_IN2();
+	ANIMATION_INIT();
 	
-	setAllColorTest();
-	delay =19;
-	delay_offset = 0;
+
+	//SD_MultiBlockTest();
+	//sd_test();
+	delay =125000;
+	delay_offset = -300;
   while (1) 
 	{
 		
@@ -65,30 +34,21 @@ int main(void)
 			{
 				// KEY 2 pressed 
 				
-				struct Param test = {0,0,0,0,0,255,110,199,32};
-				test.x = 5;
+				struct Param test;
+				
+				test.x = 10;
 				test.y = 14;
-				test.width = 10;
-				test.Red = 255;
-				test.Blue = 110;
-				test.Green = 199;
-				test.Brightness = 32;
+				test.Red = 0;
+				test.Blue = 0;
+				test.Green = 255;
+				test.Brightness = 1;
 				test.func_num = 0;
-				test.cmd = 10;
-				test.cmd2 = 1;
 
 				test.text = "H A R D E R";
-				test.duration_fix = 100;
-				test.duration= 100;
-				addLayer(test);
+				test.duration= 10000;
+				test.duration_fix = 100000;
+				image(putImage(1,58));
 				
-				if(!pressed && delay_offset >0){
-				delay_offset-= 1;
-				pressed = 1;
-				}
-			}
-			else{
-				pressed = 0;
 			}
 		
 		if(GPIOA->IDR & 0x0001)
@@ -100,33 +60,34 @@ int main(void)
 				test.Red = 57;
 				test.Blue = 20;
 				test.Green = 255;
-				test.Brightness = 32;
-				test.func_num = 1;
+				test.Brightness = 31;
+				test.Red2 = 255;
+				test.Blue2 = 0;
+				test.Green2 = 0;
+				test.Brightness2 = 31;
+				test.func_num = 4;
 				test.cmd = 10;
-				test.cmd2 = 1;
+				test.cmd2 = 0;
 				test.width = 5;
 				test.text = "A";
-				test.duration = 0;
+				test.duration = 1000;
 				test.duration_fix = 100;
-				addLayer(test);
+				setAllColor(test);
 				
-			if(!pressed2){
-			delay_offset += 10;
-			pressed2 = 1;
-			}
-				
-		}
-		else{
-			pressed2 = 0;
 		}
 		
-		LCD_DrawString(0,0, "Delayt:                 ");
-		sprintf(freq_str,"%d",delay_offset);
-		LCD_DrawString(100,0, freq_str);		
-		updateAnimation(4*period/1000);
+		delay_us(delay);
+		
+
+		LCD_DrawString(0,100,"CHECK:                           " );
+		sprintf(freq_str,"%d",Check());
+		LCD_DrawString(100,100, freq_str);	
+		updateAnimation(4*31250/1000);
+		
 		LCD_TEST();
+		
 		//displayNext();
-		//delay_us(delay);		
+		ConvertToPitch(Check(), 1);
   }
 }
 
@@ -176,22 +137,45 @@ void TIM2_IRQHandler(void)
       }
 			
 			freq = 250000/period;
-			
+			/*
 			LCD_DrawString(0,75, "Period:                 "); 
 			sprintf(freq_str,"%d",period);
 			LCD_DrawString(100,75, freq_str);	
-			
-			LCD_DrawString(0,100, "Frequency:                 "); 
-			sprintf(freq_str,"%d",freq);
+			*/
+			/*
+			LCD_DrawString(0,100, "delay:                 "); 
+			sprintf(freq_str,"%d",delay);
 			LCD_DrawString(100,100, freq_str);	
-			
+			*/
 		 delay = 4*period/SCREEN_WIDTH + delay_offset; // in us.
-		 //updateAnimation(4*period/1000);
-		 ConvertToPitch(Check(),1);
+		 updateAnimation(4*period/1000);
+			//setAllColorTest();
+		 //LCD_TEST();
+		 
   }
 	
 }
-
+void sd_test(void){
+	int i,j,k;
+	k = 54;
+		for (j = LED_LEN -1 ; j >= 0; j--)
+	{
+		for(i = 0; i < 58; i++)
+		{
+			if(k + 3<58*36*3){
+			master_channel[i][j][CH_RED] = Buffer_MultiBlock_Rx[k+2];
+			USARTsendByte(USART1, Buffer_MultiBlock_Rx[k]);
+			master_channel[i][j][CH_GREEN] = Buffer_MultiBlock_Rx[k+1];
+			USARTsendByte(USART1, Buffer_MultiBlock_Rx[k+1]);
+			master_channel[i][j][CH_BLUE]= Buffer_MultiBlock_Rx[k];
+			USARTsendByte(USART1, Buffer_MultiBlock_Rx[k+2]);
+			k+=3;
+			if(i == 57) k +=2;
+			}
+			}
+		}
+	
+}
 /*
 *	displays the projection on the lcd screen
 */
@@ -209,7 +193,7 @@ void LCD_TEST(void){
 			
 			color = (R & 0xf8) << 8 | (G & 0xfC) << 5| B >>3;
 
-			LCD_DrawDot(30+i,70+j,color);
+			LCD_DrawDot(5+i,70+j,color);
 			}
 		}
 	}

@@ -5,10 +5,21 @@
 #include "stdint.h"
 #include "TextDisplay.h"
 #include "APA102C.h"
+#include "sdcard/sdcard.h"
 
 #define MAX_LAYER 10
+#define BLOCK_SIZE            512 /* Block Size in Bytes */
 
-struct Param{
+#define NUMBER_OF_BLOCKS      13  /* For Multi Blocks operation (Read/Write) */
+#define MULTI_BUFFER_SIZE    (BLOCK_SIZE * NUMBER_OF_BLOCKS)   
+
+
+extern uint8_t  Buffer_MultiBlock_Rx[MULTI_BUFFER_SIZE];
+extern SD_Error Status;
+extern SD_CardInfo SDCardInfo;	
+//extern int i;
+	
+extern struct Param{
 	uint8_t x;
 	uint8_t y;
 	
@@ -32,8 +43,13 @@ struct Param{
 	char* text;
 	double duration_fix;
 	int  duration;
-};
+} Param;
 
+struct Param textCenter(char* txt, int R, int G,int B);
+struct Param bgColor(int R, int G, int B);
+struct Param swipeColor(int R, int G, int B, int vertical, int direction, int duration);
+struct Param putImage(int cmd, int width);
+void setAllColor(struct Param p);
 void addLayer (struct Param p);
 void removeLayer (int8_t index);
 void updateAnimation(uint16_t period);
@@ -43,4 +59,5 @@ void swipe(struct Param p);
 void checkers(struct Param p);
 void circle(struct Param p);
 void rect(struct Param p);
+void image(struct Param p);
 #endif

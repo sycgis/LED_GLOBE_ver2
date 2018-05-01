@@ -1,8 +1,8 @@
 /**
 *   Reference: https://github.com/FabLabSeoul/WingProject/wiki/STM32-UART
 **/
-#ifndef  USART_H_
-#define USART_H_
+#ifndef  MIDI_H_
+#define MIDI_H_
 
 #include "stm32f10x.h"
 

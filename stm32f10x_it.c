@@ -25,7 +25,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
-
+#include "sdcard/sdcard.h"
 /** @addtogroup STM32F10x_StdPeriph_Template
   * @{
   */
@@ -157,6 +157,10 @@ void SysTick_Handler(void)
 /**
   * @}
   */ 
-
+void SDIO_IRQHandler(void) 
+{
+  /* Process All SDIO Interrupt Sources */
+  SD_ProcessIRQSrc();
+}
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
