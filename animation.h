@@ -8,7 +8,7 @@
 
 #define MAX_LAYER 10
 
-struct Param{
+extern struct Param{
 	uint8_t x;
 	uint8_t y;
 	
@@ -32,8 +32,12 @@ struct Param{
 	char* text;
 	double duration_fix;
 	int  duration;
-};
+} Param;
 
+struct Param textCenter(char* txt, int R, int G,int B);
+struct Param bgColor(int R, int G, int B);
+struct Param swipeColor(int R, int G, int B, int vertical, int direction, int duration);
+void setAllColor(struct Param p);
 void addLayer (struct Param p);
 void removeLayer (int8_t index);
 void updateAnimation(uint16_t period);

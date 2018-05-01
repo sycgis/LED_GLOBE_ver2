@@ -1,7 +1,9 @@
 
 #include "LaunchKeys.h"
 #include "stm32f10x_gpio.h"
-#include "animation.h"
+#include "lcd.h"
+
+
 	//https://www.youtube.com/watch?v=RGkIHFQf8-w
 	//https://www.embeddedrelated.com/showarticle/519.php
 	/*
@@ -36,7 +38,13 @@
 #define ROW1                    ((uint16_t)0x0040)  /*!< Pin 6 selected */
 #define ROW2    	              ((uint16_t)0x0080)  /*!< Pin 7 selected */
 #define ROW3  	                ((uint16_t)0x1000)  /*!< Pin 12 selected */
-#define ROW4	                  ((uint16_t)0x0004)  /*!< Pin 2 selected */
+#define ROW4	                  ((uint16_t)0x0010)  /*!< Pin 2 selected */
+
+typedef struct Param* P;
+struct Param null;
+struct Param animation_list[BUTTON_NUM][EFFECT_NUM];
+_Bool ButtonOn[17];
+
 
 	//Assuming 4x4 Launch Keys + 4 Modes	
 void INITGPIO_OUT()
@@ -55,7 +63,7 @@ void INITGPIO_IN()
 	//4 INPUT pins: G2, G3, G4, G5
 	GPIO_InitTypeDef GPIO_InitStructure;
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_12;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_12 | GPIO_Pin_4;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
@@ -70,7 +78,46 @@ void INITGPIO_IN2()
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOD, &GPIO_InitStructure);
 }
-
+void ANIMATION_INIT(void){
+	int i,j;
+	null.duration = -1;
+	for(i = 0; i < BUTTON_NUM; i++){
+		for(j = 0; j < EFFECT_NUM; j++){
+				animation_list[i][j] = null;
+			}
+		}
+	animation_list[0][0] = bgColor(0,0,0);
+	animation_list[0][1] = textCenter("W O R K  I T", 255,0,146);
+		
+	animation_list[1][0] = bgColor(0,0,0);
+	animation_list[1][1] = textCenter("M A K E  I T", 34,141,255);
+		
+	animation_list[2][0] = bgColor(0,0,0);
+	animation_list[2][1] = textCenter("     D O  I T", 255,0,146);
+		
+	animation_list[3][0] = bgColor(0,0,0);
+	animation_list[3][1] = textCenter("M A K E S  U S", 34,141,255);
+	
+	animation_list[4][0] = bgColor(255,0,146);
+	animation_list[4][1] = textCenter("H A R D E R", 0,0,0);
+		
+	animation_list[5][0] = bgColor(34,141,255);
+	animation_list[5][1] = textCenter("B E T T E R", 0,0,0);
+		
+	animation_list[6][0] = bgColor(255,0,146);
+	animation_list[6][1] = textCenter("F A S T E R", 0,0,0);
+		
+	animation_list[7][0] = bgColor(34,141,255);
+	animation_list[7][1] = textCenter("S T R O N G E R", 0,0,0);
+	
+	animation_list[8][0] = swipeColor(255,0,146,1,1,300);
+	
+	animation_list[9][0] = swipeColor(255,202,27,1,0,300);
+	
+	animation_list[10][0] = swipeColor(34,141,255,0,1,300);
+	
+	animation_list[11][0] = swipeColor(186,1,255,0,0,300);
+}
 
 int Check()
 {
@@ -80,6 +127,7 @@ int Check()
 	GPIOC->BRR = COLUMN2;
 	GPIOC->BRR = COLUMN3;
 	GPIOC->BRR = COLUMN4;
+	
 	
 	//set Pin2(Column 1) to high
 	//Check if any of Pin 6/7/8/9(Rows 1,2,3,4) inputs are high
@@ -99,7 +147,7 @@ int Check()
 		//Button C Pressed
 		result = result + 4;
 	}
-	else if (GPIO_ReadInputDataBit(GPIOD, ROW4)){
+	else if (GPIO_ReadInputDataBit(GPIOC, ROW4)){
 		//Button D Pressed
 		result = result + 8;
 	}
@@ -118,7 +166,7 @@ int Check()
 		//Button G Pressed
 		result = result + 64;
 	}
-	else if (GPIO_ReadInputDataBit(GPIOD, ROW4)){
+	else if (GPIO_ReadInputDataBit(GPIOC, ROW4)){
 		//Button H Pressed
 		result = result + 128;
 	}
@@ -137,8 +185,9 @@ int Check()
 		//Button K Pressed
 		result = result + 1024;
 	}
-	else if (GPIO_ReadInputDataBit(GPIOD, ROW4)){
+	else if (GPIO_ReadInputDataBit(GPIOC, ROW4)){
 		//Button L Pressed
+
 		result = result + 2048;
 	}
 	GPIOC->BRR = COLUMN3;
@@ -156,14 +205,23 @@ int Check()
 		//Button O Pressed
 		result = result + 16384;
 	}
-	else if (GPIO_ReadInputDataBit(GPIOD, ROW4)){
+	else if (GPIO_ReadInputDataBit(GPIOC, ROW4)){
 		//Button P Pressed
+
 		result = result + 32768;
 	}
 	GPIOC->BRR = COLUMN4;
 	return result;
 }
-
+void process_animation(int n){
+	int i;
+	
+	for(i = 0; i < EFFECT_NUM; i++){
+		if(animation_list[n][i].duration != -1){
+			addLayer(animation_list[n][i]);
+		}
+	}
+}
 void ConvertToPitch(uint16_t button, uint16_t mode)
 {
 	int i;
@@ -171,6 +229,7 @@ void ConvertToPitch(uint16_t button, uint16_t mode)
 		if ((button>>i & 0x1)){
 			if(!ButtonOn[i]){
 				ButtonOn[i] = 1;
+				process_animation(i);
 				noteOn(1, i+12, 127);
 			}	
 		}

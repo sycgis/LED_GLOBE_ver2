@@ -614,7 +614,7 @@ void inputString(char* string, uint8_t Brightness, uint8_t Red, uint8_t Green, u
 void updateMaster(char character, uint8_t Brightness, uint8_t Red, uint8_t Green, uint8_t Blue, uint8_t xOffset, uint8_t yOffset){
 	int i;
 	int j;
-	if(last < 64){
+	if(last < SCREEN_WIDTH){
 		/*
 		for(i = 0; i < xOffset; ++i){
 			master_channel[j+last][i][CH_RED] = 0;

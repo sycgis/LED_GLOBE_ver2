@@ -10,7 +10,9 @@
 void NVIC_INIT(void)
 {
 	//Nested Vector Interrupt Control Initialize
+	
 	NVIC_InitTypeDef NVIC_InitStructure;
+	
 	NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
@@ -47,6 +49,7 @@ void ICTIM_INIT(void)
 	TIM_ICInitTypeDef  TIM_ICInitStructure; // Declare Variable
 	TIM_ICInitStructure.TIM_Channel = TIM_Channel_3; // Timer 2 channel 3
   TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising; // Rising Edge
+
   TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
   TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;
   TIM_ICInitStructure.TIM_ICFilter = 0x0;// 0x0 ~ 0xf

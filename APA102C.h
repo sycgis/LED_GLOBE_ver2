@@ -2,7 +2,7 @@
 
 
 #define LED_LEN 36
-#define SCREEN_WIDTH 52
+#define SCREEN_WIDTH  108
 
 #define CHANNEL_DEPTH 4
 #define CH_RED 0
@@ -25,7 +25,6 @@ void APA102C_INIT(void);
 void sendByte(uint8_t byte);
 void updateFrame(void);
 void displayNext(void);
-void setAllColor(uint8_t R, uint8_t G, uint8_t B, uint8_t Br);
 void setAllColorTest(void);
 uint32_t color(uint8_t R, uint8_t G, uint8_t B, uint8_t Br);
 void getColor(uint32_t color_b,uint8_t color[], uint8_t size);

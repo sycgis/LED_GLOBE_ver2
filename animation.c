@@ -1,6 +1,6 @@
 #include "animation.h"
-#include "lcd.h"
 #include "stdio.h"
+#include "lcd.h"
 char debug[20];
 
 struct Param animation_layer[MAX_LAYER];
@@ -84,17 +84,36 @@ void callAnimation(struct Param p)
 		case 3:
 			circle(p);
 		  break;
+		case 4:
+			setAllColor(p);
 	}
 }
-	
+//Sets LED Frame to a single color
+void setAllColor(struct Param p)
+{
+	int i,j;
+	for (i = 0; i < SCREEN_WIDTH; i++)
+	{
+		for(j = 0; j < LED_LEN; j++)
+		{
+
+			master_channel[i][j][CH_RED] = p.Red;
+			master_channel[i][j][CH_GREEN] = p.Green;
+			master_channel[i][j][CH_BLUE] = p.Blue;
+			master_channel[i][j][CH_BRIGHTNESS] = p.Brightness;
+			
+		}
+	}
+}
+
 //Loops through all the animation layer and clears it.
 void updateAnimation(uint16_t period)
 {
 	uint8_t i;
 	for(i=0;i<animation_layer_length;i++)
 	{
-		callAnimation(animation_layer[i]);
 		animation_layer[i].duration -= period; // in ms.
+		callAnimation(animation_layer[i]);	
 		if(animation_layer[i].duration <= 0) removeLayer(i);
 	}
   if(animation_layer_length>0){
@@ -164,8 +183,43 @@ void circle(struct Param p){
 	i = p.x;
 	j = p.y;
 	radius = p.width;
-	LCD_DrawString(0,50, "radius:                 ");
-	sprintf(debug,"%d",radius);
-	LCD_DrawString(100,50,debug);
 	drawCircle ( i, j, radius,  p.Red, p.Green, p.Blue, p.Brightness,p.cmd);
+}
+
+struct Param textCenter(char* txt, int R, int G, int B){
+	struct Param x;
+	x.x = 10;
+	x.y =14;
+	x.func_num = 0;
+	x.Red = R;
+	x.Green = G;
+	x.Blue = B;
+	x.text = txt;
+	
+	
+	return x;
+}
+
+struct Param bgColor(int R, int G, int B){
+	struct Param x;
+	x.func_num = 4;
+	x.Red = R;
+	x.Green = G;
+	x.Blue = B;
+
+	return x;
+}
+
+struct Param swipeColor(int R, int G, int B, int vertical, int direction, int duration){
+	struct Param x;
+	x.func_num = 2;
+	x.Red = R;
+	x.Green = G;
+	x.Blue = B;
+	x.cmd = vertical;
+	x.cmd2 = direction;
+	x.duration = duration;
+	x.duration_fix = duration;
+	
+	return x;
 }
