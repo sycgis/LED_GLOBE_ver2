@@ -54,7 +54,7 @@ void sendByte(uint8_t byte)
 {
 	while(!SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE));  //transmit buffer empty?
 	SPI_I2S_SendData(SPI1, byte); // send 8 bits of data
-	while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY));
+	//while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY));
 }
 
 // Updates contents of Master Channel to LED Frame
@@ -69,7 +69,7 @@ void updateFrame(void)
 			b = master_channel[col][row][CH_BLUE];
 			br = master_channel[col][row][CH_BRIGHTNESS];
 			
-			color = (0xE0 + br) << 24 | b << 16 | g << 8 | r;
+			color = (0xE0 | br) << 23 | b << 15 | g << 7 | r;
 			LEDFrame[col][row] = color;
 		}
 	}

@@ -123,9 +123,9 @@ void updateAnimation(uint16_t period)
 		callAnimation(animation_layer[i]);	
 		if(animation_layer[i].duration <= 0) removeLayer(i);
 	}
-  if(animation_layer_length>0){
+  //if(animation_layer_length>0){
 	updateFrame();
-	}
+	//}
 }
 
 void stripe(struct Param p){
@@ -216,6 +216,7 @@ void image(struct Param p){
 			master_channel[i][j][CH_RED] = Buffer_MultiBlock_Rx[k+2];
 			master_channel[i][j][CH_GREEN] = Buffer_MultiBlock_Rx[k+1];
 			master_channel[i][j][CH_BLUE]= Buffer_MultiBlock_Rx[k];
+			master_channel[i][j][CH_BRIGHTNESS] = p.Brightness;
 			k+=3;
 			if(i == p.y-1) k += (p.y *3)%4;
 			}
@@ -228,6 +229,8 @@ struct Param putImage(int cmd,int width){
 	x.func_num = 5;
 	x.cmd = cmd;
 	x.y = width;
+	x.Brightness = 5;
+	x.duration = 1000;
 	
 	return x;
 }
@@ -239,6 +242,7 @@ struct Param textCenter(char* txt, int R, int G, int B){
 	x.Red = R;
 	x.Green = G;
 	x.Blue = B;
+	x.Brightness = 5;
 	x.text = txt;
 	
 	
@@ -251,7 +255,7 @@ struct Param bgColor(int R, int G, int B){
 	x.Red = R;
 	x.Green = G;
 	x.Blue = B;
-
+	x.Brightness = 5;
 	return x;
 }
 
@@ -261,6 +265,7 @@ struct Param swipeColor(int R, int G, int B, int vertical, int direction, int du
 	x.Red = R;
 	x.Green = G;
 	x.Blue = B;
+	x.Brightness = 5;
 	x.cmd = vertical;
 	x.cmd2 = direction;
 	x.duration = duration;

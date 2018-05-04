@@ -2,7 +2,7 @@
 
 
 #define LED_LEN 36
-#define SCREEN_WIDTH  108
+#define SCREEN_WIDTH  72
 
 #define CHANNEL_DEPTH 4
 #define CH_RED 0
