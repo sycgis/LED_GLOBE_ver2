@@ -594,6 +594,66 @@ char Z[4][6] = {
 	{1,1,0,0,0,1}
 };
 
+char n0[3][6] = {
+	{1,1,1,1,1,1},
+	{1,0,1,1,0,1},
+	{1,1,1,1,1,1}
+};
+
+char n1[3][6] = {
+	{0,1,0,0,0,1},
+	{1,1,1,1,1,1},
+	{0,0,0,0,0,1}
+};
+
+char n2[3][6] = {
+	{1,0,1,1,1,1},
+	{1,0,1,0,0,1},
+	{1,1,1,0,0,1},
+};
+
+char n3[3][6] = {
+	{1,0,0,1,0,1},
+	{1,0,0,1,0,1},
+	{1,1,1,1,1,1}
+};
+
+char n4[4][6] = {
+	{1,1,1,0,0,0},
+	{0,0,1,0,0,0},
+	{1,1,1,1,1,1},
+	{0,0,1,0,0,0}
+};
+
+char n5[3][6] = {
+	{1,1,1,0,0,1},
+	{1,0,1,0,0,1},
+	{1,0,1,1,1,1}	
+};
+
+char n6[3][6] = {
+	{1,1,1,1,1,1},
+	{0,0,0,1,0,1},
+	{0,0,0,1,1,1}	
+};
+
+char n7[3][6] = {
+	{1,1,1,1,1,1},
+	{1,0,0,0,0,0},
+	{1,0,0,0,0,0}	
+};
+
+char n8[3][6] = {
+	{1,1,1,1,1,1},
+	{1,0,1,0,0,1},
+	{1,1,1,1,1,1}
+};
+
+char n9[3][6] = {
+	{1,0,1,0,0,0},
+	{1,0,1,0,0,0},	
+	{1,1,1,1,1,1}
+};
 
 void getData(struct Param info)
 {
@@ -1090,6 +1150,146 @@ void updateMaster(char character, uint8_t Brightness, uint8_t Red, uint8_t Green
 					}
 				}
 				//printf("\n");
+			}
+		}
+		else if(character == '0'){
+			for(i = xOffset; i < 6+xOffset; ++i){
+				for(j = yOffset; j < 3 + yOffset; ++j){
+					if(n0[j-yOffset][i-xOffset] ==1){
+						//Master[j+last][i] = 1;
+						//printf("#");
+						master_channel[j+last][i][CH_RED] = Red;
+						master_channel[j+last][i][CH_GREEN] = Green;
+						master_channel[j+last][i][CH_BLUE] = Blue;
+						master_channel[j+last][i][CH_BRIGHTNESS] = Brightness;
+					}
+				}
+			}
+		}
+		else if(character == '1'){
+			for(i = xOffset; i < 6+xOffset; ++i){
+				for(j = yOffset; j < 3 + yOffset; ++j){
+					if(n1[j-yOffset][i-xOffset] ==1){
+						//Master[j+last][i] = 1;
+						//printf("#");
+						master_channel[j+last][i][CH_RED] = Red;
+						master_channel[j+last][i][CH_GREEN] = Green;
+						master_channel[j+last][i][CH_BLUE] = Blue;
+						master_channel[j+last][i][CH_BRIGHTNESS] = Brightness;
+					}
+				}
+			}
+		}
+		else if(character == '2'){
+			for(i = xOffset; i < 6+xOffset; ++i){
+				for(j = yOffset; j < 3 + yOffset; ++j){
+					if(n2[j-yOffset][i-xOffset] ==1){
+						//Master[j+last][i] = 1;
+						//printf("#");
+						master_channel[j+last][i][CH_RED] = Red;
+						master_channel[j+last][i][CH_GREEN] = Green;
+						master_channel[j+last][i][CH_BLUE] = Blue;
+						master_channel[j+last][i][CH_BRIGHTNESS] = Brightness;
+					}
+				}
+			}
+		}
+		else if(character == '3'){
+			for(i = xOffset; i < 6+xOffset; ++i){
+				for(j = yOffset; j < 3 + yOffset; ++j){
+					if(n3[j-yOffset][i-xOffset] ==1){
+						//Master[j+last][i] = 1;
+						//printf("#");
+						master_channel[j+last][i][CH_RED] = Red;
+						master_channel[j+last][i][CH_GREEN] = Green;
+						master_channel[j+last][i][CH_BLUE] = Blue;
+						master_channel[j+last][i][CH_BRIGHTNESS] = Brightness;
+					}
+				}
+			}
+		}
+		else if(character == '4'){
+			for(i = xOffset; i < 6+xOffset; ++i){
+				for(j = yOffset; j <4 + yOffset; ++j){
+					if(n4[j-yOffset][i-xOffset] ==1){
+						//Master[j+last][i] = 1;
+						//printf("#");
+						master_channel[j+last][i][CH_RED] = Red;
+						master_channel[j+last][i][CH_GREEN] = Green;
+						master_channel[j+last][i][CH_BLUE] = Blue;
+						master_channel[j+last][i][CH_BRIGHTNESS] = Brightness;
+					}
+				}
+			}
+		}
+		else if(character == '5'){
+			for(i = xOffset; i < 6+xOffset; ++i){
+				for(j = yOffset; j < 3 + yOffset; ++j){
+					if(n5[j-yOffset][i-xOffset] ==1){
+						//Master[j+last][i] = 1;
+						//printf("#");
+						master_channel[j+last][i][CH_RED] = Red;
+						master_channel[j+last][i][CH_GREEN] = Green;
+						master_channel[j+last][i][CH_BLUE] = Blue;
+						master_channel[j+last][i][CH_BRIGHTNESS] = Brightness;
+					}
+				}
+			}
+		}
+		else if(character == '6'){
+			for(i = xOffset; i < 6+xOffset; ++i){
+				for(j = yOffset; j < 3 + yOffset; ++j){
+					if(n6[j-yOffset][i-xOffset] ==1){
+						//Master[j+last][i] = 1;
+						//printf("#");
+						master_channel[j+last][i][CH_RED] = Red;
+						master_channel[j+last][i][CH_GREEN] = Green;
+						master_channel[j+last][i][CH_BLUE] = Blue;
+						master_channel[j+last][i][CH_BRIGHTNESS] = Brightness;
+					}
+				}
+			}
+		}
+		else if(character == '7'){
+			for(i = xOffset; i < 6+xOffset; ++i){
+				for(j = yOffset; j < 3 + yOffset; ++j){
+					if(n7[j-yOffset][i-xOffset] ==1){
+						//Master[j+last][i] = 1;
+						//printf("#");
+						master_channel[j+last][i][CH_RED] = Red;
+						master_channel[j+last][i][CH_GREEN] = Green;
+						master_channel[j+last][i][CH_BLUE] = Blue;
+						master_channel[j+last][i][CH_BRIGHTNESS] = Brightness;
+					}
+				}
+			}
+		}
+		else if(character == '8'){
+			for(i = xOffset; i < 6+xOffset; ++i){
+				for(j = yOffset; j < 3 + yOffset; ++j){
+					if(n8[j-yOffset][i-xOffset] ==1){
+						//Master[j+last][i] = 1;
+						//printf("#");
+						master_channel[j+last][i][CH_RED] = Red;
+						master_channel[j+last][i][CH_GREEN] = Green;
+						master_channel[j+last][i][CH_BLUE] = Blue;
+						master_channel[j+last][i][CH_BRIGHTNESS] = Brightness;
+					}
+				}
+			}
+		}
+		else if(character == '9'){
+			for(i = xOffset; i < 6+xOffset; ++i){
+				for(j = yOffset; j < 3 + yOffset; ++j){
+					if(n9[j-yOffset][i-xOffset] ==1){
+						//Master[j+last][i] = 1;
+						//printf("#");
+						master_channel[j+last][i][CH_RED] = Red;
+						master_channel[j+last][i][CH_GREEN] = Green;
+						master_channel[j+last][i][CH_BLUE] = Blue;
+						master_channel[j+last][i][CH_BRIGHTNESS] = Brightness;
+					}
+				}
 			}
 		}
 		else if(character == ' '){
