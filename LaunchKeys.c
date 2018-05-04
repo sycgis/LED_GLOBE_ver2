@@ -39,6 +39,7 @@
 struct Param null;
 struct Param animation_list[BUTTON_NUM][EFFECT_NUM];
 _Bool ButtonOn[17];
+uint8_t mode;
 
 	//Assuming 4x4 Launch Keys + 4 Modes	
 void INITGPIO_OUT()
@@ -73,6 +74,20 @@ void INITGPIO_IN2()
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 }
 
+void INITGPIO_MODE()
+{
+	GPIO_InitTypeDef GPIO_InitStructure;
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOX, ENABLE);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_N| GPIO_Pin_M| GPIO_Pin_O| GPIO_Pin_P;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOX, &GPIO_InitStructure);
+}
+
+uint16_t shiftBit(int shift)
+{
+	return (1<<shift);
+}
 
 int Check()
 {
@@ -91,80 +106,97 @@ int Check()
 	GPIOC->BSRR = COLUMN1;
 	if(GPIO_ReadInputDataBit(GPIOC, ROW1)){
 		//Button A Pressed
-		result = result + 1;
+		result = result + shiftBit(0);
 	}
 	else if(GPIO_ReadInputDataBit(GPIOC, ROW2)){
 		//Button B Pressed
-		result = result + 2;
+		result = result + shiftBit(1);
 	}
 	else if (GPIO_ReadInputDataBit(GPIOC, ROW3)){
 		//Button C Pressed
-		result = result + 4;
+		result = result + shiftBit(2);
 	}
 	else if (GPIO_ReadInputDataBit(GPIOC, ROW4)){
 		//Button D Pressed
-		result = result + 8;
+		result = result + shiftBit(3);
 	}
 	GPIOC->BRR = COLUMN1;
 	
 	GPIOC->BSRR = COLUMN2;
 	if(GPIO_ReadInputDataBit(GPIOC, ROW1)){
 		//Button E Pressed
-		result = result + 16;
+		result = result + shiftBit(4);
 	}
 	else if(GPIO_ReadInputDataBit(GPIOC, ROW2)){
 		//Button F Pressed
-		result = result + 32;
+		result = result + shiftBit(5);
 	}
 	else if (GPIO_ReadInputDataBit(GPIOC, ROW3)){
 		//Button G Pressed
-		result = result + 64;
+		result = result + shiftBit(6);
 	}
 	else if (GPIO_ReadInputDataBit(GPIOC, ROW4)){
 		//Button H Pressed
-		result = result + 128;
+		result = result + shiftBit(7);
 	}
 	GPIOC->BRR = COLUMN2;
 	
 	GPIOC->BSRR = COLUMN3;
 	if(GPIO_ReadInputDataBit(GPIOC, ROW1)){
 		//Button I Pressed
-		result = result + 256;
+		result = result + shiftBit(8);
 	}
 	else if(GPIO_ReadInputDataBit(GPIOC, ROW2)){
 		//Button J Pressed
-		result = result + 512;
+		result = result + shiftBit(9);
 	}
 	else if (GPIO_ReadInputDataBit(GPIOC, ROW3)){
 		//Button K Pressed
-		result = result + 1024;
+		result = result + shiftBit(10);
 	}
 	else if (GPIO_ReadInputDataBit(GPIOC, ROW4)){
 		//Button L Pressed
-		result = result + 2048;
+		result = result + shiftBit(11);
 	}
 	GPIOC->BRR = COLUMN3;
 	
 	GPIOC->BSRR = COLUMN4;
 	if(GPIO_ReadInputDataBit(GPIOC, ROW1)){
 		//Button M Pressed
-		result = result + 4096;
+		result = result + shiftBit(12);
 	}
 	else if(GPIO_ReadInputDataBit(GPIOC, ROW2)){
 		//Button N Pressed
-		result = result + 8192;
+		result = result + shiftBit(13);
 	}
 	else if (GPIO_ReadInputDataBit(GPIOC, ROW3)){
 		//Button O Pressed
-		result = result + 16384;
+		result = result + shiftBit(14);
 	}
 	else if (GPIO_ReadInputDataBit(GPIOC, ROW4)){
 		//Button P Pressed
-		result = result + 32768;
+		result = result + shiftBit(15);
 	}
 	GPIOC->BRR = COLUMN4;
 	return result;
 }
+
+int modeCheck()
+{
+	if(GPIO_ReadInputDataBit(GPIOX, PIN_N)){
+		mode = 1;
+	}
+	else if(GPIO_ReadInputDataBit(GPIOX, PIN_N)){
+		mode = 2;
+	}
+	else if(GPIO_ReadInputDataBit(GPIOX, PIN_N)){
+		mode = 3;
+	}
+	else if(GPIO_ReadInputDataBit(GPIOX, PIN_N)){
+		mode = 4;
+	}
+}
+
 void process_animation(int n){
 	int i;
 	
@@ -174,21 +206,75 @@ void process_animation(int n){
 		}
 	}
 }
-void ConvertToPitch(uint16_t button, uint16_t mode)
+
+void ConvertToPitch(uint16_t button)
 {
 	int i;
-	for(i=0; i<17; ++i){
-		if ((button>>i & 0x1)){
-			if(!ButtonOn[i]){
-				process_animation(i);
-				ButtonOn[i] = 1;
-				noteOn(1, i+12, 127);
-			}	
+	if(mode == 1) {
+		for(i=0; i<17; ++i){
+			if ((button>>i & 0x1)){
+				if(!ButtonOn[i]){
+					process_animation(i);
+					ButtonOn[i] = 1;
+					noteOn(1, i+12, 127);
+				}	
+			}
+			else{
+				if(ButtonOn[i]){
+					ButtonOn[i] = 0;
+					noteOff(1,i+12,127);
+				}
+			}
 		}
-		else{
-			if(ButtonOn[i]){
-				ButtonOn[i] = 0;
-				noteOff(1,i+12,127);
+	}
+	else if(mode == 2){
+		for(i=0; i<17; ++i){
+			if ((button>>i & 0x1)){
+				if(!ButtonOn[i]){
+					process_animation(i+17);
+					ButtonOn[i] = 1;
+					noteOn(1, i+29, 127);
+				}	
+			}
+			else{
+				if(ButtonOn[i]){
+					ButtonOn[i] = 0;
+					noteOff(1,i+29,127);
+				}
+			}
+		}
+	}
+		else if(mode == 3){
+		for(i=0; i<17; ++i){
+			if ((button>>i & 0x1)){
+				if(!ButtonOn[i]){
+					process_animation(i+33);
+					ButtonOn[i] = 1;
+					noteOn(1, i+46, 127);
+				}	
+			}
+			else{
+				if(ButtonOn[i]){
+					ButtonOn[i] = 0;
+					noteOff(1,i+46,127);
+				}
+			}
+		}
+	}
+	else if(mode == 4){
+		for(i=0; i<17; ++i){
+			if ((button>>i & 0x1)){
+				if(!ButtonOn[i]){
+					process_animation(i+49);
+					ButtonOn[i] = 1;
+					noteOn(1, i+63, 127);
+				}	
+			}
+			else{
+				if(ButtonOn[i]){
+					ButtonOn[i] = 0;
+					noteOff(1,i+63,127);
+				}
 			}
 		}
 	}
@@ -233,5 +319,5 @@ void ANIMATION_INIT(void){
 	
 	animation_list[11][0] = swipeColor(186,1,255,0,0,300);
 	
-	animation_list[12][0] = putImage(3,36);
+	animation_list[12][0] = putImage(1,58);
 }
