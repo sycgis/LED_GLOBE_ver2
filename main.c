@@ -22,8 +22,10 @@ int main(void)
 
 	//SD_MultiBlockTest();
 	//sd_test();
-	delay =125000;
-	delay_offset = -300;
+	//setAllColorTest();
+	delay =1258;
+	delay_offset = 0;
+	//image(putImage(1,58));
   while (1) 
 	{
 		
@@ -36,7 +38,7 @@ int main(void)
 				
 				struct Param test;
 				
-				test.x = 10;
+				test.x = 0;
 				test.y = 14;
 				test.Red = 0;
 				test.Blue = 0;
@@ -47,7 +49,8 @@ int main(void)
 				test.text = "H A R D E R";
 				test.duration= 10000;
 				test.duration_fix = 100000;
-				image(putImage(1,58));
+				getData(test);
+				
 				
 			}
 		
@@ -75,19 +78,29 @@ int main(void)
 				setAllColor(test);
 				
 		}
-		
+		if(HIT){
+		//current_col = 0;
+		 freq = 250000/period;
+		 delay= 4*period/SCREEN_WIDTH + delay_offset; // in us.
+		 if(prev_delay > 1000) delay = prev_delay;
+		 updateAnimation(4*period/1000);
+		 LCD_TEST();
+		 ConvertToPitch(Check(), 1);
+		 HIT = 0;
+			
+		}
 		delay_us(delay);
 		
-
-		LCD_DrawString(0,100,"CHECK:                           " );
-		sprintf(freq_str,"%d",Check());
-		LCD_DrawString(100,100, freq_str);	
-		updateAnimation(4*31250/1000);
 		
-		LCD_TEST();
+		//LCD_DrawString(0,100,"CHECK:                           " );
+		//sprintf(freq_str,"%d",Check());
+		//LCD_DrawString(100,100, freq_str);	
+		//updateAnimation(4*31250/1000);
+		//LCD_TEST();
+		// ConvertToPitch(Check(), 1);
+		//updateFrame();
+		displayNext();
 		
-		//displayNext();
-		ConvertToPitch(Check(), 1);
   }
 }
 
@@ -107,51 +120,30 @@ void KEY_CONFIG (void)
 	//KEY 2
 	//GPIO_InitTypeDef GPIO_InitStructure;
 	//RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+	/*
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
+	*/
 }
 
 //Measures the difference between to interrupts. Output's the frequency in hz
 void TIM2_IRQHandler(void)
 {
+	
 	uint16_t  newv;
   if(TIM_GetITStatus(TIM2, TIM_IT_CC3) == SET) {
 			TIM_ClearITPendingBit(TIM2, TIM_IT_CC3);
-			
-			current_col = 0;
-			
       newv = TIM_GetCapture3(TIM2);
+		
       if(GPIOA->IDR & GPIO_Pin_2) {
-				
-				LCD_DrawString(0,25, "Old value:                 ");
-				sprintf(freq_str,"%d",oldv);
-				LCD_DrawString(100,25, freq_str);
-				LCD_DrawString(0,50, "New value:                 ");
-				sprintf(freq_str,"%d",newv);
-				LCD_DrawString(100,50, freq_str);
 				
 				period = (newv > oldv)? (newv - oldv) : (0xffff - oldv + newv);
 				oldv = newv;
+				current_col = 0;
+				HIT= 1;
       }
-			
-			freq = 250000/period;
-			/*
-			LCD_DrawString(0,75, "Period:                 "); 
-			sprintf(freq_str,"%d",period);
-			LCD_DrawString(100,75, freq_str);	
-			*/
-			/*
-			LCD_DrawString(0,100, "delay:                 "); 
-			sprintf(freq_str,"%d",delay);
-			LCD_DrawString(100,100, freq_str);	
-			*/
-		 delay = 4*period/SCREEN_WIDTH + delay_offset; // in us.
-		 updateAnimation(4*period/1000);
-			//setAllColorTest();
-		 //LCD_TEST();
-		 
   }
 	
 }

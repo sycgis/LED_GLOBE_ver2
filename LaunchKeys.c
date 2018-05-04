@@ -233,5 +233,5 @@ void ANIMATION_INIT(void){
 	
 	animation_list[11][0] = swipeColor(186,1,255,0,0,300);
 	
-	animation_list[12][0] = putImage(1,58);
+	animation_list[12][0] = putImage(3,36);
 }
