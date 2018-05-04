@@ -19,7 +19,8 @@ void INITGPIO_MODE(void);
 uint16_t shiftBit(int shift);
 int Check(void);
 int modeCheck(void);
-void ConvertToPitch(uint16_t button);
+void ConvertToPitch(uint16_t button, uint16_t mode);
+
 
 
 #endif
