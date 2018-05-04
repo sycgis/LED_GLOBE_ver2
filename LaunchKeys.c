@@ -231,7 +231,7 @@ void ConvertToPitch(uint16_t button)
 		for(i=0; i<17; ++i){
 			if ((button>>i & 0x1)){
 				if(!ButtonOn[i]){
-					process_animation(i);
+					process_animation(i+17);
 					ButtonOn[i] = 1;
 					noteOn(1, i+29, 127);
 				}	
@@ -248,7 +248,7 @@ void ConvertToPitch(uint16_t button)
 		for(i=0; i<17; ++i){
 			if ((button>>i & 0x1)){
 				if(!ButtonOn[i]){
-					process_animation(i);
+					process_animation(i+33);
 					ButtonOn[i] = 1;
 					noteOn(1, i+46, 127);
 				}	
@@ -265,7 +265,7 @@ void ConvertToPitch(uint16_t button)
 		for(i=0; i<17; ++i){
 			if ((button>>i & 0x1)){
 				if(!ButtonOn[i]){
-					process_animation(i);
+					process_animation(i+49);
 					ButtonOn[i] = 1;
 					noteOn(1, i+63, 127);
 				}	
