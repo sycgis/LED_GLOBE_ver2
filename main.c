@@ -17,6 +17,7 @@ int main(void)
 	INITGPIO_OUT();
 	INITGPIO_IN();
 	//INITGPIO_IN2();
+	INITGPIO_MODE();
 	ANIMATION_INIT();
 	
 
@@ -84,17 +85,18 @@ int main(void)
 		 delay= 4*period/SCREEN_WIDTH + delay_offset; // in us.
 		 if(prev_delay > 1000) delay = prev_delay;
 		 updateAnimation(4*period/1000);
-		 LCD_TEST();
-		 ConvertToPitch(Check(), 1);
+		 //LCD_TEST();
+		 modeCheck();
+		 ConvertToPitch(Check());
 		 HIT = 0;
 			
 		}
 		delay_us(delay);
-		
-		
-		//LCD_DrawString(0,100,"CHECK:                           " );
-		//sprintf(freq_str,"%d",Check());
-		//LCD_DrawString(100,100, freq_str);	
+		//modeCheck();
+		//ConvertToPitch(Check());
+		LCD_DrawString(0,100,"CHECK:                           " );
+		sprintf(freq_str,"%d",Check());
+		LCD_DrawString(100,100, freq_str);	
 		//updateAnimation(4*31250/1000);
 		//LCD_TEST();
 		// ConvertToPitch(Check(), 1);

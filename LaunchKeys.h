@@ -10,7 +10,7 @@
 #define XOFF 10
 #define YOFF 14
 
-uint8_t mode;
+extern uint8_t mode;
 void ANIMATION_INIT(void);
 void INITGPIO_OUT(void);
 void INITGPIO_IN(void);
@@ -19,7 +19,7 @@ void INITGPIO_MODE(void);
 uint16_t shiftBit(int shift);
 int Check(void);
 int modeCheck(void);
-void ConvertToPitch(uint16_t button, uint16_t mode);
+void ConvertToPitch(uint16_t button);
 
 
 
