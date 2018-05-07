@@ -10,7 +10,7 @@
 #define MAX_LAYER 10
 #define BLOCK_SIZE            512 /* Block Size in Bytes */
 
-#define NUMBER_OF_BLOCKS      13  /* For Multi Blocks operation (Read/Write) */
+#define NUMBER_OF_BLOCKS      16  /* For Multi Blocks operation (Read/Write) */
 #define MULTI_BUFFER_SIZE    (BLOCK_SIZE * NUMBER_OF_BLOCKS)   
 
 
@@ -49,6 +49,7 @@ struct Param textCenter(char* txt, int R, int G,int B);
 struct Param bgColor(int R, int G, int B);
 struct Param swipeColor(int R, int G, int B, int vertical, int direction, int duration);
 struct Param putImage(int cmd, int width);
+struct Param putStripe(int R , int G, int B, int R2, int G2, int B2, int width, int cmd);
 void setAllColor(struct Param p);
 void addLayer (struct Param p);
 void removeLayer (int8_t index);

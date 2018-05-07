@@ -92,15 +92,15 @@ int main(void)
 			
 		}
 		delay_us(delay);
-		//modeCheck();
+		modeCheck();
 		//ConvertToPitch(Check());
 		LCD_DrawString(0,100,"CHECK:                           " );
 		sprintf(freq_str,"%d",Check());
 		LCD_DrawString(100,100, freq_str);	
-		//updateAnimation(4*31250/1000);
-		//LCD_TEST();
-		// ConvertToPitch(Check(), 1);
-		//updateFrame();
+		updateAnimation(4*31250/1000);
+		LCD_TEST();
+		ConvertToPitch(Check());
+
 		displayNext();
 		
   }
