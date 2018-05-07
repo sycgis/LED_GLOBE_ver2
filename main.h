@@ -18,6 +18,7 @@
 	uint16_t freq;
 	uint16_t hall_test;
 	uint32_t sweep = 0xff000000;
+	//uint8_t mode = 1;
 	unsigned int delay, prev_delay, HIT;
 	int     delay_offset;
 	uint8_t pressed,pressed2;

@@ -1,6 +1,7 @@
 #include "animation.h"
 #include "stdio.h"
 #include "lcd.h"
+#include "MIDI.h"
 
 char debug[20];
 
@@ -196,7 +197,7 @@ void circle(struct Param p){
 void image(struct Param p){
 		int i,j,k;
 		unsigned int address = 0x1008036;
-		address += 0x2000 * p.cmd;
+		address += 0x0002000 * p.cmd;
 	  if (Status == SD_OK)
   {
     /* Read block of many bytes from address 0 */
@@ -270,6 +271,24 @@ struct Param swipeColor(int R, int G, int B, int vertical, int direction, int du
 	x.cmd2 = direction;
 	x.duration = duration;
 	x.duration_fix = duration;
+	
+	return x;
+}
+
+struct Param putStripe(int R , int G, int B, int R2, int G2, int B2, int width, int cmd){
+	struct Param x;
+	x.func_num = 1;
+	x.Red = R;
+	x.Green = G;
+	x.Blue = B;
+	x.Brightness = 5;
+	
+	x.Red2 = R2;
+	x.Blue2 = B2;
+	x.Green2 = G2;
+	
+	x.cmd = width;
+	x.cmd2 = cmd;
 	
 	return x;
 }

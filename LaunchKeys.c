@@ -33,13 +33,13 @@
 #define COLUMN4                 ((uint16_t)0x0020)  /*!< Pin 5 selected */
 #define ROW1                    ((uint16_t)0x0040)  /*!< Pin 6 selected */
 #define ROW2    	              ((uint16_t)0x0080)  /*!< Pin 7 selected */
-#define ROW3  	                ((uint16_t)0x0002)  /*!< Pin 0 selected */
+#define ROW3  	                ((uint16_t)0x0002)  /*!< Pin 1 selected */
 #define ROW4	                  ((uint16_t)0x2000)  /*!< Pin 13 selected */
 
 struct Param null;
 struct Param animation_list[BUTTON_NUM][EFFECT_NUM];
 _Bool ButtonOn[17];
-uint8_t mode;
+uint8_t mode = 1;
 
 	//Assuming 4x4 Launch Keys + 4 Modes	
 void INITGPIO_OUT()
@@ -77,11 +77,11 @@ void INITGPIO_IN2()
 void INITGPIO_MODE()
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOX, ENABLE);
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_N| GPIO_Pin_M| GPIO_Pin_O| GPIO_Pin_P;
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12| GPIO_Pin_13| GPIO_Pin_14| GPIO_Pin_15;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOX, &GPIO_InitStructure);
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
 }
 
 uint16_t shiftBit(int shift)
@@ -183,16 +183,16 @@ int Check()
 
 int modeCheck()
 {
-	if(GPIO_ReadInputDataBit(GPIOX, PIN_N)){
+	if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_12)){
 		mode = 1;
 	}
-	else if(GPIO_ReadInputDataBit(GPIOX, PIN_N)){
+	else if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_13)){
 		mode = 2;
 	}
-	else if(GPIO_ReadInputDataBit(GPIOX, PIN_N)){
+	else if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_14)){
 		mode = 3;
 	}
-	else if(GPIO_ReadInputDataBit(GPIOX, PIN_N)){
+	else if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_15)){
 		mode = 4;
 	}
 }
@@ -310,14 +310,70 @@ void ANIMATION_INIT(void){
 		
 	animation_list[7][0] = bgColor(34,141,255);
 	animation_list[7][1] = textCenter("S T R O N G E R", 0,0,0);
+
 	
-	animation_list[8][0] = swipeColor(255,0,146,1,1,300);
+	animation_list[17][0] = bgColor(0,0,0);
+	animation_list[17][1] = textCenter("M O R E  T H A N", 194,254,89);
+		
+	animation_list[18][0] = bgColor(0,0,0);
+	animation_list[18][1] = textCenter("H O U R", 89,254,149);
+		
+	animation_list[19][0] = bgColor(0,0,0);
+	animation_list[19][1] = textCenter("O U R", 194,254,89);
+		
+	animation_list[20][0] = bgColor(0,0,0);
+	animation_list[20][1] = textCenter("N E V E R", 89,254,149);
 	
-	animation_list[9][0] = swipeColor(255,202,27,1,0,300);
+	animation_list[21][0] = bgColor(194,254,89);
+	animation_list[21][1] = textCenter("E V E R", 0,0,0);
+		
+	animation_list[22][0] = bgColor(89,254,149);
+	animation_list[22][1] = textCenter("A F T E R", 0,0,0);
+		
+	animation_list[23][0] = bgColor(194,254,89);
+	animation_list[23][1] = textCenter("W O R K  I S", 0,0,0);
+		
+	animation_list[24][0] = bgColor(89,254,149);
+	animation_list[24][1] = textCenter("O V E R", 0,0,0);
 	
-	animation_list[10][0] = swipeColor(34,141,255,0,1,300);
+		
+	animation_list[33][0] = swipeColor(255,0,146,1,1,300);
 	
-	animation_list[11][0] = swipeColor(186,1,255,0,0,300);
+	animation_list[34][0] = swipeColor(255,202,27,1,0,300);
 	
-	animation_list[12][0] = putImage(1,58);
+	animation_list[35][0] = swipeColor(34,141,255,0,1,300);
+	
+	animation_list[36][0] = swipeColor(186,1,255,0,0,300);
+	
+	animation_list[37][0] = putStripe(89,194,254,254, 89, 194, 10,1);
+	
+	animation_list[38][0] = putStripe(254, 89, 194, 89,194,254, 10,1);
+	
+	animation_list[39][0] = putStripe(89,194,254,254, 89, 194, 20,0);
+	
+	animation_list[40][0] = putStripe(254, 89, 194,89,194,254, 20,0);
+	
+	
+
+	animation_list[41][1] = putImage(0,58);
+	//animation_list[41][0] = bgColor(0,0,0);
+		
+	//animation_list[42][1] = bgColor(0,0,0);
+	animation_list[42][0] = putImage(1, 58);
+	
+  //animation_list[43][0] = bgColor(0,0,0);
+	animation_list[43][1] = putImage(2,23);
+	
+	//animation_list[44][0] = bgColor(0,0,0);
+	animation_list[44][1] = putImage(3, 38);
+	
+	//animation_list[45][0] = bgColor(0,0,0);
+	animation_list[45][1] = putImage(4, 64);
+	
+	//animation_list[46][0] = bgColor(0,0,0);
+	animation_list[46][1] = putImage(5, 72);
+	
+	animation_list[47][1] = putImage(6, 72);
+	
+	animation_list[48][1] = putImage(7, 72);
 }
